@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\User;
 use Spatie\Permission\Models\Role;
 use illuminate\Support\Facades\DB;
-use illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Hash;
 use illuminate\Support\Arr;
 
 class UsuarioController extends Controller
@@ -34,7 +34,8 @@ class UsuarioController extends Controller
     public function create()
     {
         //para poder asignar los roles a los usuarios.
-        $roles=Role::pluck('name','name')->all();
+        
+        $roles=Role::all()->pluck(value:'name',key:'id');
         return view('usuarios.create',compact('roles'));
 
     }
@@ -51,7 +52,7 @@ class UsuarioController extends Controller
             'roles'=>'required'
         ]);
         $input=$request->all();
-        $input['password']=Hash::make($input['password']);
+        $input['password'] = Hash::make($input['password']);
         $user =User::create($input);
         $user->assignRole($request->input('roles'));
         return view('usuarios.index');
@@ -75,7 +76,7 @@ class UsuarioController extends Controller
         $roles= Role::pluck('name','name')->all();
         $userRole=$user->roles->pluck('name','name')->all();
 
-        return view('usuarios.editar', compact('user','roles','userRole'));
+        return view('usuarios.edit', compact('user','roles','userRole'));
 
     }
 
@@ -93,7 +94,7 @@ class UsuarioController extends Controller
         $input=$request->all();
         if(!empty($input['password']))
         {
-            $input['password']= hash::make($input['password']);
+            $input['password']= Hash::make($input['password']);
         }else{
             $input=Arr::exeept($input, array('password'));
         }

@@ -21,7 +21,8 @@
         {{-- Fila 2 --}}
         <div class="row form-group">
             <label for="description">Descripcion</label>
-            <textarea class="form-control" name="description" id="description" cols="30" rows="10">{{ $category->description }}</textarea>
+            <textarea class="form-control" name="description"
+            id="description" cols="30" rows="10">{{ $category->description }}</textarea>
         </div>
         {{-- Fila 3 --}}
         <div class="row center">
