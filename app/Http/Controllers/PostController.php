@@ -6,12 +6,13 @@ use App\Models\Post;
 use App\Models\Category;
 use Illuminate\Http\Request;
 
+
 class PostController extends Controller
 {
    
     function __construct()
     {
-        $this->middleware('permission:ver-post | crear-post | editar-post | borrar-post',['only'=>['index']]);
+        $this->middleware('permission:ver-post|crear-post|editar-post|borrar-post',['only'=>['index']]);
         $this->middleware('permission:crear-post',['only'=>['create','store']]);
         $this->middleware('permission:editar-post',['only'=>['edit','update']]);
         $this->middleware('permission:borrar-post',['only'=>['destroy']]);
@@ -23,7 +24,7 @@ class PostController extends Controller
      */
     public function index()
     {
-        $posts=Post::all();        
+        $posts=Post::all();
         return view('dashboard.post.index',['post'=>$posts]);
     }
 

@@ -2,18 +2,21 @@
 
 namespace App\Http\Controllers;
 
+
 use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
 use App\Models\User;
 use Spatie\Permission\Models\Role;
-use illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
-use illuminate\Support\Arr;
+use Illuminate\Support\Arr;
+
 
 class UsuarioController extends Controller
 {
     function __construct()
     {
-        $this->middleware('permission:ver-usuarios | crear-usuarios | editar-usuarios | borrar-usuarios',['only'=>['index']]);
+        $this->middleware('permission:ver-usuarios|crear-usuarios|editar-usuarios|borrar-usuarios',['only'=>['index']]);
         $this->middleware('permission:crear-usuarios',['only'=>['create','store']]);
         $this->middleware('permission:editar-usuarios',['only'=>['edit','update']]);
         $this->middleware('permission:borrar-usuarios',['only'=>['destroy']]);
@@ -35,7 +38,7 @@ class UsuarioController extends Controller
     {
         //para poder asignar los roles a los usuarios.
         
-        $roles=Role::all()->pluck(value:'name',key:'id');
+        $roles = Role::pluck('name', 'name')->all();
         return view('usuarios.create',compact('roles'));
 
     }
@@ -51,11 +54,13 @@ class UsuarioController extends Controller
             'password'=>'required|same:confirm-password',
             'roles'=>'required'
         ]);
+
         $input=$request->all();
         $input['password'] = Hash::make($input['password']);
         $user =User::create($input);
+        
         $user->assignRole($request->input('roles'));
-        return view('usuarios.index');
+        return redirect()->route('usuarios.index');
         
     }
 
@@ -87,7 +92,7 @@ class UsuarioController extends Controller
     {
         $this->validate($request,[
             'name'=>'required',
-            'email'=>'required|email|unique:users,email'.$id,
+            'email'=>'required|email|unique:users,email,'.$id,
             'password'=>'same:confirm-password',
             'roles'=>'required'
         ]);
@@ -96,13 +101,13 @@ class UsuarioController extends Controller
         {
             $input['password']= Hash::make($input['password']);
         }else{
-            $input=Arr::exeept($input, array('password'));
+            $input= Arr::except($input, array('password'));
         }
         $user=User::find($id);
         $user->update($input);
         DB::table('model_has_roles')->where('model_id',$id)->delete();
         $user->assignRole($request->input('roles'));
-        return view('usuarios.index');
+        return redirect()->route('usuarios.index');
     }
 
     /**
@@ -111,6 +116,8 @@ class UsuarioController extends Controller
     public function destroy($id)
     {
         User::find($id)->delete();
-        return view('usuarios.index');
+        return redirect()->route('usuarios.index');
     }
 }
+
+
