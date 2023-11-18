@@ -84,6 +84,7 @@ class PostController extends Controller
         $post = Post::find($id);
         $post->name=$request->input('name');
         $post->description=$request->input('description');
+        $post->category_id=$request->input('category');
         $post->save();
         return view("dashboard.post.message",['msg'=>"Publicación Modificada con exito"]);
     }
